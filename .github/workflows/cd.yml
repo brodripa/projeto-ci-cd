@@ -8,7 +8,6 @@ on:
   push:
     branches: [ "main" ]
 
-# Permissões necessárias para o GitHub Actions interagir com o GitHub Pages
 permissions:
   contents: read
   pages: write
@@ -22,27 +21,23 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps: deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     
-    # Só executa o deploy se o push foi na main E (se disparado por outro workflow) se o CI passou
     if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
 
     steps:
     - name: Checkout do código
       uses: actions/checkout@v4
 
-    # Configura o ambiente do GitHub Pages no runner
     - name: Configurar GitHub Pages
       uses: actions/configure-pages@v4
 
-    # Compacta e prepara os arquivos da pasta 'site' para o Pages
     - name: Upload do artefato do Pages
       uses: actions/upload-pages-artifact@v3
       with:
         path: 'site'
 
-    # Realiza o deploy definitivo na Web
     - name: Deploy para o GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
