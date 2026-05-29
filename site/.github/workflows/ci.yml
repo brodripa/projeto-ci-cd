@@ -1,0 +1,38 @@
+name: Continuous Integration (CI)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Baixa o código do repositório para a máquina virtual
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    # 2. Simula um teste de validação (Verifica se o index.html existe)
+    - name: Validar estrutura do projeto
+      run: |
+        if [ -f "site/index.html" ]; then
+          echo "Sucesso: O arquivo site/index.html foi encontrado!"
+        else
+          echo "Erro: Arquivo site/index.html não encontrado."
+          exit 1
+        fi
+
+    # 3. Simula uma validação de sintaxe simples (Linter)
+    - name: Validar sintaxe HTML básica
+      run: |
+        grep -q "</html>" site/index.html && echo "HTML tags fechadas corretamente."
+
+    # 4. Gera e armazena o artefato do build para o CD utilizar
+    - name: Upload do artefato de produção
+      uses: actions/upload-artifact@v4
+      with:
+        name: site-producao
+        path: site/
